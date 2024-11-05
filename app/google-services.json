@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "917360353265",
+    "project_id": "tasktracker-c5759",
+    "storage_bucket": "tasktracker-c5759.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917360353265:android:58d0bf0ce73390e9e8ee50",
+        "android_client_info": {
+          "package_name": "com.example.assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYbiphSFqwtfRmbHzYvxJUNT8dQz0siZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">TrackerPro</string>
+    <string name="login">Login</string>
+    <string name="welcome">Welcome Back!</string>
+    <string name="email">Enter Your Email</string>
+    <string name="add_task">Add Task</string>
+    <string name="no_task">There are currently no tasks</string>
+    <string name="add_newtask">Add new Task!</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="tasks">Tasks</string>
+
+    <string-array name="task_status_options">
+        <item>Pending</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Overdue</item>
+    </string-array>
+</resources>

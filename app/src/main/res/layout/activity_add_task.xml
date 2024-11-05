@@ -1,0 +1,64 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title EditText -->
+    <EditText
+        android:id="@+id/taskTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="Task Title"
+        android:layout_marginBottom="8dp"
+        android:inputType="text"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp" />
+
+    <!-- Description EditText -->
+    <EditText
+        android:id="@+id/taskDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="Task Description"
+        android:layout_marginBottom="16dp"
+        android:inputType="textMultiLine"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp" />
+
+    <TextView
+        android:id="@+id/selectedDateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selected Date and Time"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp" />
+
+
+    <!-- Time Picker Button -->
+    <Button
+        android:id="@+id/timePickerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="Select Time"
+        android:backgroundTint="@color/golden_yellow"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp" />
+
+
+    <!-- Save Task Button -->
+    <Button
+        android:id="@+id/saveTaskButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="Save Task"
+        android:backgroundTint="@color/sky_blue"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
