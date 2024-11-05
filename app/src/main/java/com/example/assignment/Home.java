@@ -50,7 +50,7 @@ public class Home extends AppCompatActivity {
         taskList = new ArrayList<>();
 
         // Set up RecyclerView with adapter
-        taskAdapter = new TaskAdapter(taskList);
+        taskAdapter = new TaskAdapter(taskList, this);
         tasksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         tasksRecyclerView.setAdapter(taskAdapter);
 

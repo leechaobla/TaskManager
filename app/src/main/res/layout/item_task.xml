@@ -16,12 +16,12 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/taskStatusTextView"
+        android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Status: Pending"
-        android:textSize="14sp"
-        android:textColor="#666666" />
+        android:textSize="16sp"
+        android:paddingTop="4dp" />
 
     <TextView
         android:id="@+id/descriptionTextView"
