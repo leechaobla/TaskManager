@@ -29,6 +29,7 @@
         <activity android:name=".SignUpActivity"/>
         <activity android:name=".Home"/>
         <activity android:name=".AddTaskActivity"/>
+        <activity android:name=".TaskDetailActivity"/>
 
 
     </application>

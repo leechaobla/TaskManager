@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.firebase.Timestamp; // Import Firestore Timestamp
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,7 +26,7 @@ public class AddTaskActivity extends AppCompatActivity {
     private Button timePickerButton; // Button to trigger date and time selection
     private Button saveTaskButton; // Button to save the task
     private FirebaseFirestore db; // Firestore instance
-    private long selectedTimestamp; // Variable to store selected timestamp
+    private Timestamp dueDateTimestamp = null; // Firestore Timestamp for due date
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,20 +44,10 @@ public class AddTaskActivity extends AppCompatActivity {
         saveTaskButton = findViewById(R.id.saveTaskButton);
 
         // Set click listener for the time picker button
-        timePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDateTimePicker();
-            }
-        });
+        timePickerButton.setOnClickListener(v -> showDateTimePicker());
 
         // Set click listener for the save task button
-        saveTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveTask();
-            }
-        });
+        saveTaskButton.setOnClickListener(v -> saveTask());
     }
 
     private void showDateTimePicker() {
@@ -80,10 +70,10 @@ public class AddTaskActivity extends AppCompatActivity {
                                         String.format("%02d:%02d", selectedHour, selectedMinute);
                                 selectedDateTime.setText(dateTime);
 
-                                // Store the selected timestamp
+                                // Store the selected date and time as a Firestore Timestamp
                                 Calendar selectedCalendar = Calendar.getInstance();
                                 selectedCalendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
-                                selectedTimestamp = selectedCalendar.getTimeInMillis();
+                                dueDateTimestamp = new Timestamp(selectedCalendar.getTime());
                             }, hour, minute, true);
                     timePickerDialog.show();
                 }, year, month, day);
@@ -99,6 +89,15 @@ public class AddTaskActivity extends AppCompatActivity {
         if (title.isEmpty()) {
             taskTitle.setError("Title is required");
             taskTitle.requestFocus();
+            return;
+        }
+        if (description.isEmpty()) {
+            taskDescription.setError("Description is required");
+            taskDescription.requestFocus();
+            return;
+        }
+        if (dueDateTimestamp == null) {
+            Toast.makeText(this, "Please select a due date and time for the task.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -118,7 +117,7 @@ public class AddTaskActivity extends AppCompatActivity {
         Map<String, Object> task = new HashMap<>();
         task.put("title", title);
         task.put("description", description);
-        task.put("timestamp", selectedTimestamp); // Store the selected timestamp
+        task.put("duedate", dueDateTimestamp); // Store the Firestore Timestamp as the due date
         task.put("status", "pending"); // Set default status to pending
         task.put("userid", userId); // Add user ID
         Log.d("AddTaskActivity", "Task data: " + task);
@@ -129,6 +128,9 @@ public class AddTaskActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(AddTaskActivity.this, "Task added", Toast.LENGTH_SHORT).show();
                     Log.d("AddTaskActivity", "Task added successfully with ID: " + documentReference.getId());
+                    taskTitle.setText(""); // Clear input fields after saving the task
+                    taskDescription.setText("");
+                    selectedDateTime.setText("");
                     finish(); // Close activity and return to previous screen
                 })
                 .addOnFailureListener(e -> {

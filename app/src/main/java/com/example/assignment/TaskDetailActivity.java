@@ -1,83 +1,119 @@
 package com.example.assignment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import androidx.annotation.Nullable;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import java.util.Date;
+import java.util.Locale;
+import com.google.firebase.Timestamp;
+import java.text.SimpleDateFormat;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class TaskDetailActivity extends AppCompatActivity {
 
-    private TextView taskDetailTitleTextView;
-    private TextView taskDetailDescriptionTextView;
-    private TextView taskDetailStatusTextView;
-    private Button markCompleteButton;
-    private FirebaseFirestore db;
+    private TextView titleTextView, descriptionTextView, statusTextView, dueDateTextView;
+    private Button markDoneButton, deleteButton;
+    private ImageButton backButton;
     private String taskId;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
+        // Initialize views
+        titleTextView = findViewById(R.id.taskTitle);
+        descriptionTextView = findViewById(R.id.taskDescription);
+        statusTextView = findViewById(R.id.taskStatus);
+        dueDateTextView = findViewById(R.id.taskDueDate);
+        backButton = findViewById(R.id.backButton);
+        markDoneButton = findViewById(R.id.markCompleteButton);
+        deleteButton = findViewById(R.id.deleteButton);
 
-        // Get taskId from intent
-        taskId = getIntent().getStringExtra("taskId");
+        // Retrieve task data and document ID from the Intent
+        Intent intent = getIntent();
+        taskId = intent.getStringExtra("TASK_ID");
+        String title = intent.getStringExtra("title");
+        String description = intent.getStringExtra("description");
+        String status = intent.getStringExtra("status");
+        Timestamp dueDateTimestamp = intent.getParcelableExtra("duedate");
 
-        // Initialize UI elements
-        taskDetailTitleTextView = findViewById(R.id.taskDetailTitleTextView);
-        taskDetailDescriptionTextView = findViewById(R.id.taskDetailDescriptionTextView);
-        taskDetailStatusTextView = findViewById(R.id.taskDetailStatusTextView);
-        markCompleteButton = findViewById(R.id.markCompleteButton);
+        // Set task data to TextViews
+        titleTextView.setText(title);
+        descriptionTextView.setText(description);
+        statusTextView.setText("Status: " + status);
 
-        // Load task details
-        loadTaskDetails();
+        // Convert Timestamp to formatted date string and display
+        if (dueDateTimestamp != null) {
+            Date dueDate = dueDateTimestamp.toDate();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            String formattedDate = dateFormat.format(dueDate);
+            dueDateTextView.setText("Due date: " + formattedDate);
+        } else {
+            dueDateTextView.setText("Due Date: Not set");
+        }
 
-        // Set up button click listener to mark the task as complete
-        markCompleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                markTaskAsComplete();
-            }
-        });
+        // Back button action
+        backButton.setOnClickListener(v -> finish());
+
+        // Mark as Done button action
+        markDoneButton.setOnClickListener(v -> markTaskAsComplete());
+
+        // Delete button action
+        deleteButton.setOnClickListener(v -> deleteTask());
     }
 
-    private void loadTaskDetails() {
-        // Fetch task data from Firestore using taskId
-        db.collection("tasks").document(taskId).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                Task task = documentSnapshot.toObject(Task.class);
-                if (task != null) {
-                    taskDetailTitleTextView.setText(task.getTitle());
-                    taskDetailDescriptionTextView.setText(task.getDescription());
-                    taskDetailStatusTextView.setText("Status: " + task.getStatus());
-
-                    // Disable button if task is already completed
-                    if ("completed".equalsIgnoreCase(task.getStatus())) {
-                        markCompleteButton.setEnabled(false);
-                    }
-                }
-            }
-        }).addOnFailureListener(e -> {
-            // Handle any errors
-            taskDetailTitleTextView.setText("Error loading task");
-        });
-    }
-
+    // Marks the task as complete in Firestore and updates the UI accordingly
     private void markTaskAsComplete() {
-        // Update task status in Firestore to "completed"
-        db.collection("tasks").document(taskId).update("status", "completed")
+        if (taskId == null) {
+            Toast.makeText(this, "Task ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference taskRef = db.collection("tasks").document(taskId);
+
+        // Update Firestore document status to "Complete"
+        taskRef.update("status", "Complete")
                 .addOnSuccessListener(aVoid -> {
-                    taskDetailStatusTextView.setText("Status: Completed");
-                    markCompleteButton.setEnabled(false); // Disable button after marking as complete
+                    // Update UI to reflect the completed status
+                    updateStatusUI("Complete");
+                    Toast.makeText(this, "Task marked as complete", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    // Handle failure to update
-                    taskDetailStatusTextView.setText("Failed to mark as complete");
+                    Toast.makeText(this, "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // Helper method to update the status UI
+    private void updateStatusUI(String status) {
+        statusTextView.setText("Status: " + status);
+        statusTextView.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+    }
+
+    // Deletes the task from Firestore
+    private void deleteTask() {
+        if (taskId == null) {
+            Toast.makeText(this, "Task ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference taskRef = db.collection("tasks").document(taskId);
+
+        // Delete task document
+        taskRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT).show();
+                    finish();  // Close the TaskDetailActivity after deletion
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to delete task", Toast.LENGTH_SHORT).show();
                 });
     }
 }

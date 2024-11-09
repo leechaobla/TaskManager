@@ -36,24 +36,30 @@ android {
 dependencies {
 
     // AndroidX Libraries
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.9.3")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
 
     // Firebase platform BOM (Bill of Materials)
-    implementation(platform(libs.firebase.bom))
-
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
     // Firebase Authentication
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-auth-ktx")
 
     // Firebase Firestore
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-firestore:25.1.1")  // Update to the latest version
+    implementation ("com.google.firebase:firebase-auth:23.1.0")       // For Firebase Authentication (if you're using it)
+    implementation ("com.google.firebase:firebase-core:21.1.1")
+
+
+    // WorkManager for background tasks
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
+    implementation ("com.google.guava:guava:30.1-android")
 
     // Test Libraries
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }
