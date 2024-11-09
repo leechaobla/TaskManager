@@ -3,6 +3,7 @@ package com.example.assignment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -52,7 +53,22 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         // Delete button action with confirmation dialog
         deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+
+        checkAndMarkAsLate();
+
+        // Set up a handler to check if task is late periodically (every 5 minutes)
+        Handler handler = new Handler();
+        Runnable checkLateTaskRunnable = new Runnable() {
+            @Override
+            public void run() {
+                checkAndMarkAsLate();
+                handler.postDelayed(this, 60000); // Check every 1 min
+            }
+        };
+        handler.post(checkLateTaskRunnable);
     }
+
+
 
     // Loads task details from Firebase
     private void loadTaskDetails() {
@@ -156,5 +172,39 @@ public class TaskDetailActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to delete task", Toast.LENGTH_SHORT).show();
                 });
+    }
+    private void checkAndMarkAsLate() {
+        if (taskId == null) {
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference taskRef = db.collection("tasks").document(taskId);
+
+        taskRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                String status = documentSnapshot.getString("status");
+                Timestamp dueDateTimestamp = documentSnapshot.getTimestamp("duedate");
+
+                if (status != null && !status.equals("Complete") && dueDateTimestamp != null) {
+                    Date dueDate = dueDateTimestamp.toDate();
+                    Date currentDate = new Date();
+
+                    if (currentDate.after(dueDate)) {
+                        // Update the task status to "Late" if past due date
+                        taskRef.update("status", "Late")
+                                .addOnSuccessListener(aVoid -> {
+                                    updateStatusUI("Late");
+                                    Toast.makeText(this, "Task is now marked as Late", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Failed to mark task as Late", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to retrieve task details", Toast.LENGTH_SHORT).show();
+        });
     }
 }
