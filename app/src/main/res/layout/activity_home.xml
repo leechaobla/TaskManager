@@ -3,18 +3,144 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="0dp"
+    android:background="@color/background">
 
-    <!-- Section Title for Active Tasks -->
+    <!-- Profile and Greeting Section -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="30dp">
+
+
+        <!-- Profile Image -->
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/user"
+            android:layout_alignParentEnd="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"/>
+
+        <!-- Greeting and Task Count -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/greetingTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome Back"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="@color/primary_text_color"
+                android:paddingBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/taskCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lets get back to tracking tasks !"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text_color"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Task Category Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <!-- To-Do Category Button -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/checklist"
+                android:background="@drawable/circle_background_todo"
+                android:padding="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To-Do"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Progress Category Button -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/checklist"
+                android:background="@drawable/circle_background_progress"
+                android:padding="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Progress"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Done Category Button -->
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/checklist"
+                android:background="@drawable/circle_background_done"
+                android:padding="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Today's Tasks Section Title -->
     <TextView
         android:id="@+id/activeTasksTitleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Active Tasks"
+        android:padding="10dp"
+        android:text="Your Active Tasks"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:paddingBottom="8dp"
-        android:layout_gravity="start" />
+        android:paddingBottom="8dp"/>
 
     <!-- No Tasks Message -->
     <TextView
@@ -23,33 +149,41 @@
         android:layout_height="wrap_content"
         android:text="@string/no_task"
         android:visibility="gone"
-        android:gravity="center"
         android:textSize="18sp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center"/>
 
-    <!-- RecyclerView for Tasks -->
+    <!-- Horizontal RecyclerView for Task Cards -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical"/>
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:scrollbars="horizontal"/>
 
     <!-- Add Task Button -->
     <Button
         android:id="@+id/addTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_task"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"/>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu" />
+        android:text="@string/add_task"
+        android:backgroundTint="@color/primary_color"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="1dp"/>
 
-
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/windowBackground"
+        android:elevation="8dp"/>
 </LinearLayout>

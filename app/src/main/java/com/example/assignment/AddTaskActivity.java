@@ -2,14 +2,18 @@ package com.example.assignment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.Timestamp; // Import Firestore Timestamp
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +29,8 @@ public class AddTaskActivity extends AppCompatActivity {
     private TextView selectedDateTime; // TextView to display selected date and time
     private Button timePickerButton; // Button to trigger date and time selection
     private Button saveTaskButton; // Button to save the task
+    private ImageButton backButton; // ImageButton for back navigation
+
     private FirebaseFirestore db; // Firestore instance
     private Timestamp dueDateTimestamp = null; // Firestore Timestamp for due date
 
@@ -42,6 +48,15 @@ public class AddTaskActivity extends AppCompatActivity {
         selectedDateTime = findViewById(R.id.selectedDateTime);
         timePickerButton = findViewById(R.id.timePickerButton);
         saveTaskButton = findViewById(R.id.saveTaskButton);
+        backButton = findViewById(R.id.backButton);
+
+        // Set click listener for the back button
+        backButton.setOnClickListener(v -> {
+            // Create an intent to navigate to HomeActivity
+            Intent intent = new Intent(AddTaskActivity.this, Home.class);
+            startActivity(intent); // Start HomeActivity
+            finish(); // Optionally finish AddTaskActivity
+        });
 
         // Set click listener for the time picker button
         timePickerButton.setOnClickListener(v -> showDateTimePicker());

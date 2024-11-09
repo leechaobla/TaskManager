@@ -30,6 +30,8 @@
         <activity android:name=".Home"/>
         <activity android:name=".AddTaskActivity"/>
         <activity android:name=".TaskDetailActivity"/>
+        <activity android:name=".CompletedTasksActivity"/>
+        <activity android:name=".ProfileActivity"/>
 
 
     </application>

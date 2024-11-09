@@ -65,17 +65,17 @@ public class Home extends AppCompatActivity {
         });
 
         // Set up Bottom Navigation
-        BottomNavigationView bottomNavigationView = findViewById(R.id.BottomNavigationView);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 // Already on Home
                 return true;
             } else if (itemId == R.id.nav_tasks) {
-                startActivity(new Intent(Home.this, TasksActivity.class));
+                startActivity(new Intent(Home.this, CompletedTasksActivity.class));
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(Home.this, ProfileActivity.class));
+                startActivity(new Intent(Home.this, com.example.assignment.ProfileActivity.class));
                 return true;
             }
             return false;

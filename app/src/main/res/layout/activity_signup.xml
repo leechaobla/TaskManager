@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_marginTop="100dp"> <!-- Added margin to the parent to push everything down -->
 
     <!-- App Name or Logo -->
     <TextView
@@ -80,7 +81,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Sign Up"
-        android:backgroundTint="@color/sky_blue"
+        android:backgroundTint="@color/primary_color"
         app:layout_constraintTop_toBottomOf="@id/confirmPasswordEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

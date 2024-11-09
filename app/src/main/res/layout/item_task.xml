@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_margin="8dp"
+    android:padding="8dp"
+    android:background="@drawable/rounded_rectangle_background">
 
     <!-- Main task information row -->
     <LinearLayout
@@ -17,28 +19,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:padding="5dp"
             android:text="Task Title"
-            android:textSize="16sp"/>
+            android:textStyle="bold"
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/descriptionTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:layout_gravity="center"
             android:text="Description"
-            android:layout_marginEnd="8dp"/>
+            android:textSize="15sp"/>
 
-        <TextView
-            android:id="@+id/statusTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Status"
-            android:layout_marginEnd="8dp"/>
 
         <!-- View Details button to toggle expanded content -->
         <Button
             android:id="@+id/viewDetailsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/secondary_color"
             android:text="View Details"/>
     </LinearLayout>
 

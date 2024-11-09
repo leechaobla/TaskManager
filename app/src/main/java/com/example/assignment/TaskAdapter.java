@@ -38,7 +38,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         // Set main task information
         holder.titleTextView.setText(task.getTitle());
         holder.descriptionTextView.setText(task.getDescription());
-        holder.statusTextView.setText(task.getStatus());
 
         // Format and set due date for display
         Timestamp dueDateTimestamp = task.getDueDate(); // Assuming dueDate is a Timestamp in Task class
@@ -86,7 +85,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TextView titleTextView, descriptionTextView, statusTextView, taskDueTime;
+        TextView titleTextView, descriptionTextView, taskDueTime;
         Button viewDetailsButton, markCompleteButton, editButton, deleteButton;
         LinearLayout expandedDetails;
 
@@ -94,7 +93,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
-            statusTextView = itemView.findViewById(R.id.statusTextView);
             taskDueTime = itemView.findViewById(R.id.taskDueTime); // Display the due date
             viewDetailsButton = itemView.findViewById(R.id.viewDetailsButton);
             expandedDetails = itemView.findViewById(R.id.expandedDetails);

@@ -5,6 +5,29 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start"
+        android:src="@drawable/left"
+        android:contentDescription="Back"
+        android:scaleType="centerInside"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/addtask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:textStyle="bold"
+        android:text="Enter Your Task Details"
+        android:textSize="30sp"
+        android:gravity="center"/>
+
     <!-- Title EditText -->
     <EditText
         android:id="@+id/taskTitle"
@@ -12,7 +35,7 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:hint="Task Title"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="30dp"
         android:inputType="text"
         android:background="@drawable/edit_text_background"
         android:padding="12dp" />
@@ -24,7 +47,7 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:hint="Task Description"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="30dp"
         android:inputType="textMultiLine"
         android:background="@drawable/edit_text_background"
         android:padding="12dp" />
@@ -35,7 +58,7 @@
         android:layout_height="wrap_content"
         android:text="Selected Date and Time"
         android:layout_marginBottom="16dp"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
 
     <!-- Time Picker Button -->
@@ -43,11 +66,13 @@
         android:id="@+id/timePickerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:minHeight="48dp"
         android:text="Select Time"
-        android:backgroundTint="@color/golden_yellow"
+        android:textSize="18sp"
+        android:backgroundTint="@color/secondary_color"
         android:textColor="@android:color/white"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="5dp" />
 
 
     <!-- Save Task Button -->
@@ -55,10 +80,13 @@
         android:id="@+id/saveTaskButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:minHeight="48dp"
         android:text="Save Task"
-        android:backgroundTint="@color/sky_blue"
+        android:textSize="18sp"
+        android:backgroundTint="@color/primary_color"
         android:textColor="@android:color/white"
         android:layout_marginTop="8dp" />
+
 
 </LinearLayout>

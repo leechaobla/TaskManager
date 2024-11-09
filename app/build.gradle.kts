@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     implementation ("com.google.guava:guava:30.1-android")
+    implementation(libs.recyclerview)
 
     // Test Libraries
     testImplementation("junit:junit:4.13.2")

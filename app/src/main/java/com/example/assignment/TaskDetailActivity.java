@@ -1,11 +1,13 @@
 package com.example.assignment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Date;
 import java.util.Locale;
@@ -64,8 +66,26 @@ public class TaskDetailActivity extends AppCompatActivity {
         // Mark as Done button action
         markDoneButton.setOnClickListener(v -> markTaskAsComplete());
 
-        // Delete button action
-        deleteButton.setOnClickListener(v -> deleteTask());
+        // Delete button action with confirmation dialog
+        deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+    }
+
+    // Shows a confirmation dialog before deleting the task
+    private void showDeleteConfirmationDialog() {
+        // Create the confirmation dialog
+        new AlertDialog.Builder(TaskDetailActivity.this)
+                .setTitle("Confirm Deletion")
+                .setMessage("Are you sure you want to delete this task?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Proceed with deleting the task
+                        deleteTask();
+                    }
+                })
+                .setNegativeButton("No", null) // No action if "No" is clicked
+                .create()
+                .show();
     }
 
     // Marks the task as complete in Firestore and updates the UI accordingly
