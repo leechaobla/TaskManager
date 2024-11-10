@@ -23,11 +23,15 @@ public class TaskDetailActivity extends AppCompatActivity {
     private Button markDoneButton, deleteButton;
     private ImageButton backButton;
     private String taskId;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
+        // Initialize Firebase Firestore instance
+        db = FirebaseFirestore.getInstance();
 
         // Initialize views
         titleTextView = findViewById(R.id.taskTitle);
@@ -54,68 +58,43 @@ public class TaskDetailActivity extends AppCompatActivity {
         // Delete button action with confirmation dialog
         deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
 
-        checkAndMarkAsLate();
-
-        // Set up a handler to check if task is late periodically (every 5 minutes)
-        Handler handler = new Handler();
-        Runnable checkLateTaskRunnable = new Runnable() {
-            @Override
-            public void run() {
-                checkAndMarkAsLate();
-                handler.postDelayed(this, 60000); // Check every 1 min
-            }
-        };
-        handler.post(checkLateTaskRunnable);
+        // Periodically check and mark as late
+        startLateCheckHandler();
     }
-
-
 
     // Loads task details from Firebase
     private void loadTaskDetails() {
         if (taskId == null) {
-            Toast.makeText(this, "Task ID not found", Toast.LENGTH_SHORT).show();
+            showToast("Task ID not found");
             finish();
             return;
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference taskRef = db.collection("tasks").document(taskId);
 
-        // Retrieve the task data from Firestore
         taskRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        String title = documentSnapshot.getString("title");
-                        String description = documentSnapshot.getString("description");
-                        String status = documentSnapshot.getString("status");
+                        titleTextView.setText(documentSnapshot.getString("title"));
+                        descriptionTextView.setText(documentSnapshot.getString("description"));
+                        updateStatusUI(documentSnapshot.getString("status"));
+
                         Timestamp dueDateTimestamp = documentSnapshot.getTimestamp("duedate");
-
-                        // Set values to the views
-                        titleTextView.setText(title);
-                        descriptionTextView.setText(description);
-                        statusTextView.setText("Status: " + status);
-
-                        // Convert Timestamp to formatted date and time string and display
                         if (dueDateTimestamp != null) {
-                            Date dueDate = dueDateTimestamp.toDate();
-                            // Format to display both date and time
                             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
-                            String formattedDate = dateFormat.format(dueDate);
-                            dueDateTextView.setText("Due date: " + formattedDate);
+                            dueDateTextView.setText("Due date: " + dateFormat.format(dueDateTimestamp.toDate()));
                         } else {
                             dueDateTextView.setText("Due Date: Not set");
                         }
                     } else {
-                        Toast.makeText(this, "Task not found", Toast.LENGTH_SHORT).show();
+                        showToast("Task not found");
                         finish();
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to retrieve task details", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> showToast("Failed to retrieve task details"));
     }
 
-    // Shows a confirmation dialog before deleting the task
+    // Confirmation dialog for task deletion
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(TaskDetailActivity.this)
                 .setTitle("Confirm Deletion")
@@ -126,59 +105,56 @@ public class TaskDetailActivity extends AppCompatActivity {
                 .show();
     }
 
-    // Marks the task as complete in Firestore and updates the UI
+    // Mark task as complete in Firestore
     private void markTaskAsComplete() {
         if (taskId == null) {
-            Toast.makeText(this, "Task ID not found", Toast.LENGTH_SHORT).show();
+            showToast("Task ID not found");
             return;
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference taskRef = db.collection("tasks").document(taskId);
 
-        // Update Firestore document status to "Complete"
         taskRef.update("status", "Complete")
                 .addOnSuccessListener(aVoid -> {
                     updateStatusUI("Complete");
-                    Toast.makeText(this, "Task marked as complete", Toast.LENGTH_SHORT).show();
+                    showToast("Task marked as complete");
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> showToast("Failed to mark task as complete"));
     }
 
     // Helper method to update the status UI
     private void updateStatusUI(String status) {
         statusTextView.setText("Status: " + status);
-        statusTextView.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        int color = status.equals("Complete") ? android.R.color.holo_green_dark
+                : status.equals("Late") ? android.R.color.holo_red_dark
+                : status.equals("pending")? android.R.color.holo_orange_light
+                : android.R.color.black;
+        statusTextView.setTextColor(getResources().getColor(color));
     }
 
     // Deletes the task from Firestore
     private void deleteTask() {
         if (taskId == null) {
-            Toast.makeText(this, "Task ID not found", Toast.LENGTH_SHORT).show();
+            showToast("Task ID not found");
             return;
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference taskRef = db.collection("tasks").document(taskId);
 
-        // Delete task document
         taskRef.delete()
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT).show();
+                    showToast("Task deleted");
                     finish();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to delete task", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> showToast("Failed to delete task"));
     }
+
+    // Check if the task is late and update status if necessary
     private void checkAndMarkAsLate() {
         if (taskId == null) {
             return;
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference taskRef = db.collection("tasks").document(taskId);
 
         taskRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -186,25 +162,35 @@ public class TaskDetailActivity extends AppCompatActivity {
                 String status = documentSnapshot.getString("status");
                 Timestamp dueDateTimestamp = documentSnapshot.getTimestamp("duedate");
 
-                if (status != null && !status.equals("Complete") && dueDateTimestamp != null) {
-                    Date dueDate = dueDateTimestamp.toDate();
-                    Date currentDate = new Date();
-
-                    if (currentDate.after(dueDate)) {
-                        // Update the task status to "Late" if past due date
+                if (!"Complete".equals(status) && dueDateTimestamp != null) {
+                    if (new Date().after(dueDateTimestamp.toDate())) {
                         taskRef.update("status", "Late")
                                 .addOnSuccessListener(aVoid -> {
                                     updateStatusUI("Late");
-                                    Toast.makeText(this, "Task is now marked as Late", Toast.LENGTH_SHORT).show();
+                                    showToast("Task is now marked as Late");
                                 })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Failed to mark task as Late", Toast.LENGTH_SHORT).show();
-                                });
+                                .addOnFailureListener(e -> showToast("Failed to mark task as Late"));
                     }
                 }
             }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to retrieve task details", Toast.LENGTH_SHORT).show();
-        });
+        }).addOnFailureListener(e -> showToast("Failed to retrieve task details"));
+    }
+
+    // Periodic handler to check if the task is late
+    private void startLateCheckHandler() {
+        Handler handler = new Handler();
+        Runnable checkLateTaskRunnable = new Runnable() {
+            @Override
+            public void run() {
+                checkAndMarkAsLate();
+                handler.postDelayed(this, 60000); // Check every 5 minutes
+            }
+        };
+        handler.post(checkLateTaskRunnable);
+    }
+
+    // Show Toast helper method
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
