@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +41,23 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 confirmLogout();
             }
+        });
+
+        // Set up Bottom Navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(ProfileActivity.this, Home.class));
+                return true;
+            } else if (itemId == R.id.nav_tasks) {
+                startActivity(new Intent(ProfileActivity.this, CompletedTasksActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                // Already in Profile, no action required
+                return true;
+            }
+            return false;
         });
     }
 

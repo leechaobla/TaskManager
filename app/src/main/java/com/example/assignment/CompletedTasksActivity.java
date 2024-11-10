@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -53,12 +54,29 @@ public class CompletedTasksActivity extends AppCompatActivity {
 
         // Set the "Go Back" button click listener
         goBackButton.setOnClickListener(v -> {
-            // Navigate back to the Home Activity (MainActivity or other)
+            // Navigate back to the Home Activity
             Intent intent = new Intent(CompletedTasksActivity.this, Home.class);
             startActivity(intent); // Start the home activity
 
             // Optional: Finish the current activity to ensure it doesn't remain in the back stack
             finish();
+        });
+
+        // Set up Bottom Navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(CompletedTasksActivity.this, Home.class));
+                return true;
+            } else if (itemId == R.id.nav_tasks) {
+                // Already in Completed Tasks, no action required
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(CompletedTasksActivity.this, ProfileActivity.class));
+                return true;
+            }
+            return false;
         });
     }
 
