@@ -110,16 +110,6 @@
         android:padding="15dp"
         android:layout_marginTop="20dp">
 
-        <!-- Edit Button -->
-        <Button
-            android:id="@+id/editButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:backgroundTint="@android:color/holo_orange_light"
-            android:text="Edit"
-            android:textColor="@android:color/black"
-            android:textSize="20dp"
-            android:layout_marginEnd="16dp" /> <!-- Added margin to create space after Edit button -->
 
         <!-- Mark as Done Button -->
         <Button
