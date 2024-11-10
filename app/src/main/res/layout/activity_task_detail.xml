@@ -110,25 +110,40 @@
         android:padding="15dp"
         android:layout_marginTop="20dp">
 
+        <!-- Edit Button -->
+        <Button
+            android:id="@+id/editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:text="Edit"
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:layout_marginEnd="16dp" /> <!-- Added margin to create space after Edit button -->
+
+        <!-- Mark as Done Button -->
         <Button
             android:id="@+id/markCompleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mark as Done"
-            android:textSize="20dp"
+            android:textSize="21dp"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/primary_color"
             android:paddingHorizontal="24dp"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp" /> <!-- This margin can also be adjusted for more or less space -->
 
+        <!-- Delete Button -->
         <Button
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Delete"
-            android:textSize="20dp"
-            android:textColor="@android:color/white"
             android:backgroundTint="@android:color/holo_red_dark"
-            android:paddingHorizontal="24dp" />
+            android:paddingHorizontal="24dp"
+            android:text="Delete"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:layout_marginStart="8dp" /> <!-- Added margin to the start of the Delete button -->
     </LinearLayout>
+
 </LinearLayout>
