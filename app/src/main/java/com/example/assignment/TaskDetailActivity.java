@@ -144,6 +144,13 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     showToast("Task deleted");
+
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("task_deleted", true);
+                    setResult(RESULT_OK, resultIntent);
+
+                    // Close this activity (TaskDetailsActivity)
                     finish();
                 })
                 .addOnFailureListener(e -> showToast("Failed to delete task"));

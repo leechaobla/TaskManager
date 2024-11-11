@@ -19,6 +19,7 @@ import com.google.firebase.FirebaseApp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -26,7 +27,11 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private TextView loginTextView;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth; // Declare FirebaseAuth instance
+    private FirebaseAuth mAuth;
+
+    // Regular expression to check if the password has at least 8 characters, one uppercase, one lowercase, and one digit
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +39,9 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         FirebaseApp.initializeApp(this);
 
-        // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         FirebaseFirestore.setLoggingEnabled(true);
-
 
         usernameEditText = findViewById(R.id.usernameEditText);
         emailEditText = findViewById(R.id.emailEditText);
@@ -50,30 +53,21 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = usernameEditText.getText().toString();
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String confirmPassword = confirmPasswordEditText.getText().toString();
+                String username = usernameEditText.getText().toString().trim();
+                String email = emailEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
+                String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
-                if (!username.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()) {
-                    if (password.equals(confirmPassword)) {
-                        // Sign up the user with Firebase Authentication
-                        mAuth.createUserWithEmailAndPassword(email, password)
-                                .addOnCompleteListener(SignUpActivity.this, task -> {
-                                    if (task.isSuccessful()) {
-                                        // Sign-up successful, save user data to Firestore
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        saveUserToFirestore(user, username, email);
-                                    } else {
-                                        // If sign up fails, display a message to the user.
-                                        Toast.makeText(SignUpActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        Toast.makeText(SignUpActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                if (validateInput(username, email, password, confirmPassword)) {
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignUpActivity.this, task -> {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    saveUserToFirestore(user, username, email);
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
             }
         });
@@ -86,28 +80,38 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean validateInput(String username, String email, String password, String confirmPassword) {
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Toast.makeText(SignUpActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            Toast.makeText(SignUpActivity.this, "Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, and one number", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(SignUpActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     private void saveUserToFirestore(FirebaseUser firebaseUser, String username, String email) {
-        // Create a user map to store in Firestore
         Map<String, Object> user = new HashMap<>();
         user.put("uid", firebaseUser.getUid());
         user.put("username", username);
         user.put("email", email);
 
-        // Save to Firestore under the "users" collection
         db.collection("users")
                 .document(firebaseUser.getUid())
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
-                    // Success, display a success message or navigate to another activity
                     Toast.makeText(SignUpActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    // Failure, display a message and log the error details
                     Toast.makeText(SignUpActivity.this, "Failed to save user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e("FirestoreError", "Error saving user data", e);
                 });
     }
-
-    }
-
-
+}
