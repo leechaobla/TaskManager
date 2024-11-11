@@ -29,7 +29,6 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
-    // Regular expression to check if the password has at least 8 characters, one uppercase, one lowercase, and one digit
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
 
